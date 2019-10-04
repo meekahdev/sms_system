@@ -166,7 +166,7 @@ Home
                         myChart.clear();
                         piechart.clear();
 
-                        var option = {
+                        var option1 = {
                             title: {
                                 text: 'Expenses Analytics'
                             },
@@ -185,9 +185,28 @@ Home
                             }]
                         };
 
+                           var option2 = {
+                            title: {
+                                text: 'Expenses Analytics'
+                            },
+                            tooltip: {},
+                            legend: {
+                                data:['Expenses']
+                            },
+                            xAxis: {
+                                data: data.categories
+                            },
+                            yAxis: {},
+                            series: [{
+                                name: 'Expenses',
+                                type: 'pie',
+                                data: data.count
+                            }]
+                        };
 
-                        myChart.setOption(option);
-                        piechart.setOption(option);
+
+                        myChart.setOption(option1);
+                        piechart.setOption(option2);
 
 
                         myChart.refresh();

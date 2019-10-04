@@ -143,8 +143,8 @@ class ExpenseController extends Controller
                     'category_id'=>$request->expense_category,
                     'user_id'=>$this->AuthUser->id,
                     'amount'=>$request->amount,
-                    'from_date'=>$request->from,
-                    'to_date'=>$request->to
+                    'from_date'=>Carbon\Carbon::parse($request->from)->format('Y-m-d H:i'),
+                    'to_date'=>Carbon\Carbon::parse($request->to)->format('Y-m-d H:i')
                     ]);
 
                     if($expenses_limit){
@@ -168,8 +168,8 @@ class ExpenseController extends Controller
             $expenses_limit->category_id=$request->expense_category;
             $expenses_limit->user_id=$this->AuthUser->id;
             $expenses_limit->amount=$request->amount;
-            $expenses_limit->from_date=$request->from;
-            $expenses_limit->to_date=$request->to;
+            $expenses_limit->from_date=Carbon\Carbon::parse($request->from)->format('Y-m-d H:i');
+            $expenses_limit->to_date=Carbon\Carbon::parse($request->to)->format('Y-m-d H:i');
 
             if($expenses_limit){
                 return response()->json(['status'=>true,'msg'=>'Expenses Limitation was updated successfully']);
