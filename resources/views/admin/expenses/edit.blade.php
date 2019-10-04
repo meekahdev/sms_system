@@ -30,7 +30,7 @@ Home
 				<select class="form-control input-sm" name="expense_category" id="expense_category">
 					<option value="">Please Select</option>
 					@foreach ($categories as $item)
-						<option {{($expense->category_id == $item->id ? 'selected' : '')}} value="{{$item->id}}">{{$item->name}}</option>	
+						<option {{($expense->category_id == $item->id ? 'selected' : '')}} value="{{$item->id}}">{{$item->name}}</option>
 					@endforeach
 				</select>
 			</div>
@@ -115,7 +115,7 @@ Home
 				label.remove();
 			}
 		});
-			
+
 			$('#btn-cancel').on('click', function()
 			{
 				window.location = '/admin/expenses/get-expense';
@@ -124,7 +124,31 @@ Home
 			$("#frm_update_expense").validate({
 				submitHandler: function() {
 					event.preventDefault();
-					$('#frm_update_expense').ajaxSubmit(function(response) {
+
+					var valid=true;
+
+					$.ajax({
+						url:'/admin/expenses/validate',
+						type:'get',
+						data:{
+							expense_category:$('#expense_category').val(),
+							amount:$('#amount').val(),
+							date:$('#expense_date').val(),
+						},
+						async:false,
+						success:function(data){
+							valid=data;
+						}
+
+
+					});
+
+
+
+					if(valid){
+						$('#frm_update_expense').ajaxSubmit(function(response) {
+
+
 
 						if(response == true)
 						{
@@ -151,23 +175,42 @@ Home
 							confirmButtonText: 'Ok',
 							closeOnConfirm: true
 							}, function() {
-							
+
 							});
 						}
-						
+
 					});
+					}else{
+							swal.fire({
+						title: 'Error',
+						text: 'Exceeded the amount limitation for this category',
+						type: 'warning',
+						showCancelButton: false,
+						confirmButtonText: 'Ok',
+						closeOnConfirm: true
+						}, function() {
+
+						});
+					}
+
+
 				},
 				rules: {
 					amount: 'required',
 					expense_date: 'required',
-					expense_category: 'required',
+					expense_category: {
+						required:true,
+					},
 					description: 'required',
 					comment: 'required'
 				},
 				messages: {
 					amount: 'Please verify Amount',
 					expense_date: 'Please verify date',
-					expense_category: 'Please verify category',
+					expense_category:{
+						require: 'Please verify category'
+						//remote:'Expenses for this category exceeded the limity'
+					},
 					description: 'Please verify description',
 					comment: 'Please verify comment'
 				}

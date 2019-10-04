@@ -5,13 +5,13 @@
 @endsection
 
 
-@section('header-content')	
+@section('header-content')
 <h3>Home</h3>
 @endsection
 
 
 
-@section('main-content')	
+@section('main-content')
 		<!-- Small boxes (Stat box) -->
 		<div class="row">
 			<div class="col-lg-3 col-xs-6">
@@ -91,14 +91,14 @@
 				</div>
 			</div><!-- ./col -->
 		</div><!-- /.row -->
-	
+
 		<!-- top row -->
 		<div class="row">
 			<div class="col-xs-12 connectedSortable">
-				
+
 			</div><!-- /.col -->
 		</div>
 		<!-- /.row -->
-	
+
 @endsection
 

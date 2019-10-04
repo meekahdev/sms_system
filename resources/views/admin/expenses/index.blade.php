@@ -4,7 +4,7 @@
 	Home
 @endsection
 
-@section('custom-css')	
+@section('custom-css')
 <style>
 	.header-button
 	{
@@ -13,12 +13,12 @@
 </style>
 @endsection
 
-@section('header-content')	
+@section('header-content')
 <div >
 <h3>Expenses</h3>
 </div>
 <div class="row">
-	
+
 
 </div>
 @endsection
@@ -31,7 +31,7 @@
 			<button id="add_category" class="btn btn-success header-button" ><i class="fa fa-btn fa-add"></i> ADD EXPENSES</button>
 		</div>
 	</div>
-	
+
 	<table id="cateogry_grid" class="table table-bordered">
 		<thead>
 			<tr>
@@ -45,7 +45,7 @@
 	</table>
 @endsection
 
-@section('custom-scripts')	
+@section('custom-scripts')
 	<script>
 
 		function delete_expenses(id)
@@ -62,14 +62,14 @@
 				cancelButtonText: 'No',
 				closeOnConfirm: false
 				}).then( function(isConfirm)
-				{	
+				{
 					console.log(isConfirm);
 					if(isConfirm.value == true)
 					{
 						window.location='/admin/expenses/delete?id='+id;
 					}
 				});
-					
+
 		}
 
 		$(document).ready(function()

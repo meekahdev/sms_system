@@ -37,7 +37,17 @@ Route::post('/admin/expenses/update', 'ExpenseController@update');
 Route::get('/admin/expenses/create', 'ExpenseController@create');
 Route::get('/admin/expenses/delete', 'ExpenseController@delete');
 Route::post('/admin/expenses/store', 'ExpenseController@store');
+Route::get('/admin/expenses/validate', 'ExpenseController@ValidateExpenses');
 
+
+Route::get('/admin/expenses/limitation','ExpenseController@expensesLimitation');
+Route::get('/admin/expenses/limitation/add','ExpenseController@addLimitation');
+Route::post('/admin/expenses/limitation/store','ExpenseController@storeLimitation');
+Route::get('/admin/expenses/limitation/edit','ExpenseController@editLimitation');
+Route::post('/admin/expenses/limitation/{id}/update','ExpenseController@updateLimitation');
+Route::get('/admin/expenses/limitation/delete','ExpenseController@deleteLimitation');
+
+Route::get('/admin/expenses/analytics','ExpenseController@Analytics');
 
 
 

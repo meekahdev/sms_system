@@ -18,8 +18,8 @@ class ExpenseController extends Controller
     }
 
     public function index(Request $request)
-    {   
- 
+    {
+
         if(isset($request->type) && $request->type == 'json')
         {
             $expenses = ExpenseMaster::join('category_master', 'category_master.id', '=', 'expenses_master.category_id')
@@ -44,7 +44,7 @@ class ExpenseController extends Controller
 
         $expense = ExpenseMaster::find($request->id);
         $categories = Category::get();
-        
+
 
         return view('admin.expenses.edit',compact('expense','categories'));
     }
@@ -58,7 +58,7 @@ class ExpenseController extends Controller
         $expense->amount = $request->amount;
         $expense->generated_at = Carbon\Carbon::parse($request->expense_date)->format('Y-m-d H:i');
         $expense->save();
-        
+
         return response()->json(true);
         //return redirect('/admin/categoery/get-category');
     }
@@ -75,7 +75,7 @@ class ExpenseController extends Controller
             'generated_at' => Carbon\Carbon::parse($request->expense_date)->format('Y-m-d H:i')
 
         ]);
-        
+
         return response()->json(true);
         //return redirect('/admin/categoery/get-category');
     }
@@ -85,4 +85,182 @@ class ExpenseController extends Controller
         $category = ExpenseMaster::find($request->id)->delete();
         return redirect('/admin/expenses/get-expense');
     }
+
+
+
+    public function expensesLimitation(Request $request){
+
+
+        if(isset($request->type) && $request->type == 'json')
+        {
+            $expenseslimit = \App\ExpensesLimit::join('category_master', 'category_master.id', '=', 'expenses_limit.category_id')
+                                       ->where('user_id', $this->AuthUser->id)
+                                       ->select('expenses_limit.*', DB::raw('category_master.name AS cat_name'))->get();
+
+            return response()->json([ 'data' => $expenseslimit]);
+        }
+
+        return view('admin.limitation.index');
+
+    }
+
+    public function addLimitation(Request $request){
+
+             $categories = Category::get();
+        return view('admin.limitation.create',['categories'=>$categories]);
+
+    }
+
+
+    public function EditLimitation(Request $request){
+
+
+             $categories = Category::get();
+
+             $expenses=\App\ExpensesLimit::where('id','=',$request->id)
+                                         ->where('user_id','=',$this->AuthUser->id)
+                                         ->first();
+
+
+
+        return view('admin.limitation.edit',['categories'=>$categories,'expenses'=>$expenses]);
+
+    }
+
+
+    public function storeLimitation(Request $request){
+
+           if($request->expense_category){
+
+                $limit=\App\ExpensesLimit::where('category_id','=',$request->expense_category)
+                                         ->where('user_id','=',$this->AuthUser->id)
+                                         ->first();
+                if($limit){
+                     return response()->json(['status'=>false,'msg'=>' Limitation for the selected category is already added']);
+                }else{
+
+                    $expenses_limit=\App\ExpensesLimit::create([
+                    'category_id'=>$request->expense_category,
+                    'user_id'=>$this->AuthUser->id,
+                    'amount'=>$request->amount,
+                    'from_date'=>$request->from,
+                    'to_date'=>$request->to
+                    ]);
+
+                    if($expenses_limit){
+                     return response()->json(['status'=>true,'msg'=>'Expenses Limitation was added successfully']);
+                    }
+                  return response()->json(['status'=>false,'msg'=>'Oops something went wrong']);
+
+                }
+
+           }
+
+
+    }
+
+    public function updateLimitation(Request $request,$id){
+
+
+        if($request->id){
+
+            $expenses_limit=\App\ExpensesLimit::find($request->id);
+            $expenses_limit->category_id=$request->expense_category;
+            $expenses_limit->user_id=$this->AuthUser->id;
+            $expenses_limit->amount=$request->amount;
+            $expenses_limit->from_date=$request->from;
+            $expenses_limit->to_date=$request->to;
+
+            if($expenses_limit){
+                return response()->json(['status'=>true,'msg'=>'Expenses Limitation was updated successfully']);
+            }
+
+            return response()->json(['status'=>false,'msg'=>'Oops something went wrong']);
+
+        }
+
+
+       return response()->json(['status'=>false,'msg'=>'Oops something went wrong']);
+
+    }
+
+    public function deleteLimitation(Request $request){
+           $expenses=\App\ExpensesLimit::where('id','=',$request->id)
+                                         ->where('user_id','=',$this->AuthUser->id)
+                                         ->delete();
+
+        return redirect('/admin/expenses/limitation');
+    }
+
+
+    public function ValidateExpenses(Request $request){
+
+
+        if($request->expense_category){
+
+            $expenses=\App\ExpensesLimit::where('category_id','=',$request->expense_category)
+                                        ->where('amount','<',$request->amount)
+                                        ->where('user_id','=',$this->AuthUser->id)
+                                        ->whereRaw('? between from_date and to_date', [$request->date])
+                                        ->first();
+
+            if($expenses){
+                  return \response()->json(false);
+
+            }
+
+            return \response()->json(true);
+
+        }
+
+    }
+
+    public function Analytics(Request $request){
+
+        if($request->type && $request->type=='ajax'){
+             $categories = ExpenseMaster::join('category_master','category_id','=','category_master.id')
+                                        ->select(
+                                            'category_master.name',
+                                            DB::raw("SUM(amount) as amount")
+                                        )
+
+                                        ->where('expenses_master.user_id','=',$this->AuthUser->id);
+
+                                        if (isset($request->from, $request->to)) {
+
+                                            $start=date("Y-m-d", strtotime($request->from));
+                                            $end=date("Y-m-d", strtotime($request->to));
+
+                                            $categories->where(function ($q) use ($start,$end) {
+                                                $q->whereBetween('expenses_master.generated_at', [$start, $end]);
+                                            });
+
+                                        }
+
+
+                                        $categories=$categories->groupBy('category_id')
+                                        ->get();
+
+
+
+             //get()->pluck('name')->toArray();
+             return \response()->json(
+
+                        [
+                            'categories'=>$categories->pluck('name')->toArray(),
+                            'count'=>$categories->pluck('amount')->toArray()
+
+                        ]
+
+                );
+
+        }else{
+
+        return view('admin.dashboard.index');
+        }
+
+    }
+
+
+
 }

@@ -27,7 +27,7 @@ Home
 				<select class="form-control input-sm" name="expense_category" id="expense_category">
 					<option value="">Please Select</option>
 					@foreach ($categories as $item)
-						<option value="{{$item->id}}">{{$item->name}}</option>	
+						<option value="{{$item->id}}">{{$item->name}}</option>
 					@endforeach
 				</select>
 			</div>
@@ -79,7 +79,7 @@ Home
 <script>
 	$(document).ready(function()
 	{
-		$('.timepicker').datetimepicker({}); 
+		$('.timepicker').datetimepicker({});
 
 		$.validator.setDefaults({
 			ignore: '', // ignore hidden fields
@@ -114,7 +114,7 @@ Home
 				label.remove();
 			}
 		});
-			
+
 		$('#btn-cancel').on('click', function()
 		{
 			window.location = '/admin/expenses/get-expense';
@@ -123,7 +123,28 @@ Home
 		$("#frm_create_expenses").validate({
 			submitHandler: function() {
 				event.preventDefault();
-				$('#frm_create_expenses').ajaxSubmit(function(response) {
+
+					var valid=true;
+
+					$.ajax({
+						url:'/admin/expenses/validate',
+						type:'get',
+						data:{
+							expense_category:$('#expense_category').val(),
+							amount:$('#amount').val(),
+							date:$('#expense_date').val(),
+						},
+						async:false,
+						success:function(data){
+							valid=data;
+						}
+
+
+					});
+
+				if(valid){
+					$('#frm_create_expenses').ajaxSubmit(function(response) {
+
 
 					if(response == true)
 					{
@@ -139,7 +160,7 @@ Home
 							window.location = '/admin/expenses/get-expense';
 						});
 
-						
+
 					}
 
 					else
@@ -152,11 +173,25 @@ Home
 						confirmButtonText: 'Ok',
 						closeOnConfirm: true
 						}, function() {
-						
+
 						});
 					}
-					
+
 				});
+				}else{
+						swal.fire({
+						title: 'Error',
+						text: 'Exceeded the amount limitation for this category',
+						type: 'warning',
+						showCancelButton: false,
+						confirmButtonText: 'Ok',
+						closeOnConfirm: true
+						}, function() {
+
+						});
+				}
+
+
 			},
 			rules: {
 				amount: 'required',

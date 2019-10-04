@@ -37,11 +37,15 @@
             <li><a href="#"><i class='fa fa-users'></i> <span>Users</span></a></li>
             <li><a href="/admin/categoery/get-category"><i class='fa fa-pencil-square-o'></i> <span>Category</span></a></li>
             <li><a href="/admin/expenses/get-expense"><i class='fa fa-book'></i> <span>Expenses</span></a></li>
+
+                            <li><a href="/admin/expenses/limitation"><i class='fa fa-book'></i> <span>Expenses Limit</span></a></li>
+
+
             <li class="treeview">
                 <a href="#"><i class='fa fa-line-chart'></i> <span>Reports</span> <i class="fa fa-angle-left pull-right"></i></a>
                 <ul class="treeview-menu">
-                    <li><a href="#">Monthly Report</a></li>
-                    <li><a href="#">User Report</a></li>
+                    <li><a href="/admin/expenses/analytics">Expenses Analytics</a></li>
+
                 </ul>
             </li>
         </ul><!-- /.sidebar-menu -->
