@@ -201,7 +201,7 @@ class ExpenseController extends Controller
             $expenses=\App\ExpensesLimit::where('category_id','=',$request->expense_category)
                                         ->where('amount','<',$request->amount)
                                         ->where('user_id','=',$this->AuthUser->id)
-                                        ->whereRaw('? between from_date and to_date', [$request->date])
+                                        ->whereRaw('? between from_date and to_date', [Carbon\Carbon::parse($request->date)->format('Y-m-d H:i')])
                                         ->first();
 
             if($expenses){
