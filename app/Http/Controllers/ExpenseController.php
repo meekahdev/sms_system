@@ -221,7 +221,7 @@ class ExpenseController extends Controller
              $categories = ExpenseMaster::join('category_master','category_id','=','category_master.id')
                                         ->select(
                                             'category_master.name',
-                                            DB::raw("SUM(amount) as amount")
+                                            DB::raw("SUM(amount) as value")
                                         )
 
                                         ->where('expenses_master.user_id','=',$this->AuthUser->id);
@@ -248,8 +248,8 @@ class ExpenseController extends Controller
 
                         [
                             'categories'=>$categories->pluck('name')->toArray(),
-                            'count'=>$categories->pluck('amount')->toArray()
-
+                            'count'=>$categories->pluck('value')->toArray(),
+                            'pie_data' => $categories->toArray()
                         ]
 
                 );

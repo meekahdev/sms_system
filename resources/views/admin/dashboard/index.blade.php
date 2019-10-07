@@ -84,6 +84,7 @@ Home
 
         var category;
         var expenses;
+        var pie_data;
 
         function getData(){
 
@@ -94,21 +95,25 @@ Home
                     success:function(data){
                         category=data.categories;
                         expenses=data.count;
+                        pie_data = data.pie_data;
+                        console.log(pie_data);
                     }
                 });
 
             }
 
          getData();
-
+        
 
        var myChart = echarts.init(document.getElementById('bar'));
 
         // specify chart configuration item and data
 
         var option = {
-            title: {
-                text: 'Expenses Analytics'
+            title : {
+                text: 'Expenses Analytics',
+                subtext: 'In Grid Mode',
+                x:'right'
             },
             tooltip: {},
             legend: {
@@ -134,21 +139,20 @@ Home
 
         // specify chart configuration item and data
         var option = {
-            title: {
-                text: 'Expenses Analytics'
+            title : {
+                text: 'Expenses Analytics',
+                subtext: 'In Pie Mode',
+                x:'right'
             },
             tooltip: {},
             legend: {
                 data:['Expenses']
             },
-            xAxis: {
-                data:category
-            },
-            yAxis: {},
+           
             series: [{
-                name: 'Expenses',
+                name: category,
                 type: 'pie',
-                data: expenses
+                data: pie_data
             }]
         };
 
@@ -178,8 +182,10 @@ Home
                         piechart.clear();
 
                         var option1 = {
-                            title: {
-                                text: 'Expenses Analytics'
+                            title : {
+                                text: 'Expenses Analytics',
+                                subtext: 'In Grid Mode',
+                                x:'right'
                             },
                             tooltip: {},
                             legend: {
@@ -197,21 +203,19 @@ Home
                         };
 
                            var option2 = {
-                            title: {
-                                text: 'Expenses Analytics'
+                            title : {
+                                text: 'Expenses Analytics',
+                                subtext: 'In Pie Mode',
+                                x:'right'
                             },
                             tooltip: {},
                             legend: {
                                 data:['Expenses']
                             },
-                            xAxis: {
-                                data: data.categories
-                            },
-                            yAxis: {},
                             series: [{
                                 name: 'Expenses',
                                 type: 'pie',
-                                data: data.count
+                                data: data.pie_data
                             }]
                         };
 
