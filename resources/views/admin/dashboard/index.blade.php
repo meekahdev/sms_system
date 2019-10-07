@@ -35,6 +35,16 @@ Home
 
             </div>
 
+            <div class="col-md-3"  >
+                <label>Sort By Expense</label>
+                <select multiple data-live-search="true" name="expenses_multiselect[]" class="" id="expenses_multiselect">
+                    @foreach ($categories as $item)
+                        <option value="{{$item->id}}">{{$item->name}}</option>
+                    @endforeach
+                </select>
+            </div>
+
+
             <div class="col-md-2" >
                 <br>
                 <button type="submit" class="btn btn-primary" >Filter</button>
@@ -70,6 +80,7 @@ Home
 <script type="text/javascript">
 
 		$('.timepicker').datetimepicker({});
+        $('#expenses_multiselect').selectpicker();
 
         var category;
         var expenses;

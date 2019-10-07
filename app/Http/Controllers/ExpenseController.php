@@ -255,8 +255,8 @@ class ExpenseController extends Controller
                 );
 
         }else{
-
-        return view('admin.dashboard.index');
+            $categories =  Category::get();
+        return view('admin.dashboard.index', compact('categories'));
         }
 
     }
