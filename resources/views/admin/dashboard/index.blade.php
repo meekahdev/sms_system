@@ -22,8 +22,16 @@ Home
         <div class="row" >
 
            <form  id="frm-filter" name="frm-filter" action="/admin/expenses/analytics?type=ajax" >
-
-                 <div class="col-md-3"  >
+            <div class="col-md-3" >
+                <label>Category</label>
+                	<select class="form-control input-sm" name="expense_category" id="expense_category">
+					<option value="">Please Select</option>
+					@foreach ($categories as $item)
+						<option value="{{$item->id}}">{{$item->name}}</option>
+					@endforeach
+				</select>
+            </div>
+            <div class="col-md-3"  >
                 <label>From</label>
                <input type="text" id="from_date" class="timepicker form-control input-sm" name="from_date" >
 
@@ -158,6 +166,7 @@ Home
                     data:{
                         from:$("#from_date").val(),
                         to:$('#to_date').val(),
+                        category:$('#expense_category').val(),
                         type:'ajax'
                     },
                     async:false,

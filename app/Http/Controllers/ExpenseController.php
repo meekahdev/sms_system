@@ -226,6 +226,11 @@ class ExpenseController extends Controller
 
                                         ->where('expenses_master.user_id','=',$this->AuthUser->id);
 
+
+                                        if(isset($request->category)){
+                                            $categories->where('expenses_master.category_id','=',$request->category);
+                                        }
+
                                         if (isset($request->from, $request->to)) {
 
                                             $start=date("Y-m-d", strtotime($request->from));
@@ -255,8 +260,9 @@ class ExpenseController extends Controller
                 );
 
         }else{
+           $categories = Category::get();
 
-        return view('admin.dashboard.index');
+        return view('admin.dashboard.index',['categories'=>$categories]);
         }
 
     }
