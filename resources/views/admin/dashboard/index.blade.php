@@ -22,15 +22,7 @@ Home
         <div class="row" >
 
            <form  id="frm-filter" name="frm-filter" action="/admin/expenses/analytics?type=ajax" >
-            <div class="col-md-3" >
-                <label>Category</label>
-                	<select class="form-control input-sm" name="expense_category" id="expense_category">
-					<option value="">Please Select</option>
-					@foreach ($categories as $item)
-						<option value="{{$item->id}}">{{$item->name}}</option>
-					@endforeach
-				</select>
-            </div>
+
             <div class="col-md-3"  >
                 <label>From</label>
                <input type="text" id="from_date" class="timepicker form-control input-sm" name="from_date" >
@@ -42,6 +34,16 @@ Home
                <input type="text" id="to_date" class="timepicker form-control input-sm" name="to_date" >
 
             </div>
+
+            <div class="col-md-3"  >
+                <label>Sort By Expense</label>
+                <select multiple data-live-search="true" name="expenses_multiselect[]" class="" id="expenses_multiselect">
+                    @foreach ($categories as $item)
+                        <option value="{{$item->id}}">{{$item->name}}</option>
+                    @endforeach
+                </select>
+            </div>
+
 
             <div class="col-md-2" >
                 <br>
@@ -78,9 +80,11 @@ Home
 <script type="text/javascript">
 
 		$('.timepicker').datetimepicker({});
+        $('#expenses_multiselect').selectpicker();
 
         var category;
         var expenses;
+        var pie_data;
 
         function getData(){
 
@@ -91,6 +95,8 @@ Home
                     success:function(data){
                         category=data.categories;
                         expenses=data.count;
+                        pie_data = data.pie_data;
+                        console.log(pie_data);
                     }
                 });
 
@@ -104,8 +110,10 @@ Home
         // specify chart configuration item and data
 
         var option = {
-            title: {
-                text: 'Expenses Analytics'
+            title : {
+                text: 'Expenses Analytics',
+                subtext: 'In Grid Mode',
+                x:'right'
             },
             tooltip: {},
             legend: {
@@ -131,21 +139,20 @@ Home
 
         // specify chart configuration item and data
         var option = {
-            title: {
-                text: 'Expenses Analytics'
+            title : {
+                text: 'Expenses Analytics',
+                subtext: 'In Pie Mode',
+                x:'right'
             },
             tooltip: {},
             legend: {
                 data:['Expenses']
             },
-            xAxis: {
-                data:category
-            },
-            yAxis: {},
+
             series: [{
-                name: 'Expenses',
+                name: category,
                 type: 'pie',
-                data: expenses
+                data: pie_data
             }]
         };
 
@@ -166,7 +173,7 @@ Home
                     data:{
                         from:$("#from_date").val(),
                         to:$('#to_date').val(),
-                        category:$('#expense_category').val(),
+                        category:$('#expenses_multiselect').val(),
                         type:'ajax'
                     },
                     async:false,
@@ -176,8 +183,10 @@ Home
                         piechart.clear();
 
                         var option1 = {
-                            title: {
-                                text: 'Expenses Analytics'
+                            title : {
+                                text: 'Expenses Analytics',
+                                subtext: 'In Grid Mode',
+                                x:'right'
                             },
                             tooltip: {},
                             legend: {
@@ -195,21 +204,19 @@ Home
                         };
 
                            var option2 = {
-                            title: {
-                                text: 'Expenses Analytics'
+                            title : {
+                                text: 'Expenses Analytics',
+                                subtext: 'In Pie Mode',
+                                x:'right'
                             },
                             tooltip: {},
                             legend: {
                                 data:['Expenses']
                             },
-                            xAxis: {
-                                data: data.categories
-                            },
-                            yAxis: {},
                             series: [{
                                 name: 'Expenses',
                                 type: 'pie',
-                                data: data.count
+                                data: data.pie_data
                             }]
                         };
 

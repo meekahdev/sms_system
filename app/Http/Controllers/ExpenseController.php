@@ -201,7 +201,7 @@ class ExpenseController extends Controller
             $expenses=\App\ExpensesLimit::where('category_id','=',$request->expense_category)
                                         ->where('amount','<',$request->amount)
                                         ->where('user_id','=',$this->AuthUser->id)
-                                        ->whereRaw('? between from_date and to_date', [$request->date])
+                                        ->whereRaw('? between from_date and to_date', [Carbon\Carbon::parse($request->date)->format('Y-m-d H:i')])
                                         ->first();
 
             if($expenses){
@@ -221,14 +221,14 @@ class ExpenseController extends Controller
              $categories = ExpenseMaster::join('category_master','category_id','=','category_master.id')
                                         ->select(
                                             'category_master.name',
-                                            DB::raw("SUM(amount) as amount")
+                                            DB::raw("SUM(amount) as value")
                                         )
 
                                         ->where('expenses_master.user_id','=',$this->AuthUser->id);
 
 
                                         if(isset($request->category)){
-                                            $categories->where('expenses_master.category_id','=',$request->category);
+                                            $categories->whereIn('expenses_master.category_id',$request->category);
                                         }
 
                                         if (isset($request->from, $request->to)) {
@@ -253,16 +253,15 @@ class ExpenseController extends Controller
 
                         [
                             'categories'=>$categories->pluck('name')->toArray(),
-                            'count'=>$categories->pluck('amount')->toArray()
-
+                            'count'=>$categories->pluck('value')->toArray(),
+                            'pie_data' => $categories->toArray()
                         ]
 
                 );
 
         }else{
-           $categories = Category::get();
-
-        return view('admin.dashboard.index',['categories'=>$categories]);
+            $categories =  Category::get();
+        return view('admin.dashboard.index', compact('categories'));
         }
 
     }
