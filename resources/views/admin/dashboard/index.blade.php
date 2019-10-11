@@ -178,6 +178,7 @@ Home
                     },
                     async:false,
                     success:function(data){
+                        if(data.count!=''){
 
                         myChart.clear();
                         piechart.clear();
@@ -224,10 +225,21 @@ Home
                         myChart.setOption(option1);
                         piechart.setOption(option2);
 
+                        }else{
 
-                        myChart.refresh();
-                        piechart.refresh();
+                                 myChart.clear();
+                        piechart.clear();
+                            swal.fire({
+                            title: 'oops',
+                            text: 'Not Expenses Found on current date range',
+                            type: 'warning',
+                            showCancelButton: false,
+                            confirmButtonText: 'Ok',
+                            closeOnConfirm: true
+                            }, function() {
 
+                            });
+                        }
                     }
                 });
 

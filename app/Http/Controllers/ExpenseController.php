@@ -217,6 +217,8 @@ class ExpenseController extends Controller
 
     public function Analytics(Request $request){
 
+
+
         if($request->type && $request->type=='ajax'){
              $categories = ExpenseMaster::join('category_master','category_id','=','category_master.id')
                                         ->select(
@@ -227,11 +229,12 @@ class ExpenseController extends Controller
                                         ->where('expenses_master.user_id','=',$this->AuthUser->id);
 
 
-                                        if(isset($request->category)){
-                                            $categories->whereIn('expenses_master.category_id',$request->category);
+                                        if(!empty($request->category) && count($request->category)>0){
+
+                                            $categories->whereIn('category_master.id',$request->category);
                                         }
 
-                                        if (isset($request->from, $request->to)) {
+                                        if (isset($request->from, $request->to)&& !empty($request->from) && !empty($request->to)) {
 
                                             $start=date("Y-m-d", strtotime($request->from));
                                             $end=date("Y-m-d", strtotime($request->to));
